@@ -17,22 +17,33 @@ OPENCLASSROOMS EST MON AMI
 
 class App extends Component {
 
+  constructor(props) {
+    super(props);
+    this.nameInput = React.createRef();
+  }
+
   state = this.generateInitialState();
+
+  componentDidMount() {
+    this.nameInput.current.focus();
+  }
 
   generateInitialState() {
     const phrase = PHRASES[Math.floor(Math.random() * PHRASES.length)]
     const usedLetters = new Set()
-    const display = this.computeDisplay(phrase, usedLetters)
+    const display = computeDisplay(phrase, usedLetters)
 
     return { phrase, display, usedLetters, won: false}
   }
 
-  computeDisplay(phrase, usedLetters) {  
-    return phrase.replace(/\w/g, (letter) => (usedLetters.has(letter) ? letter : '_'))
-  }
-
   handletter(letter){
-
+    let { phrase, display, usedLetters} = this.state
+    console.log(letter)
+    usedLetters.add(letter)
+    display = computeDisplay(phrase,usedLetters)
+    const won = !display.includes('_')
+    
+    this.setState({ display, usedLetters, won })
   }
 
   reset() {
@@ -40,7 +51,7 @@ class App extends Component {
   }
 
   render() {
-    const { phrase, usedLetters, display, won} = this.state
+    const { usedLetters, display, won} = this.state
 
     return (
       <div className={`hangman ${(won && 'won') || ''}`}>
@@ -57,12 +68,15 @@ class App extends Component {
               </button>
             ))
           )}
-
         </p>
-
+        <input ref={this.nameInput} size="1" maxLength="1" onChange={() => this.handletter(this.nameInput.current.value)} /> 
       </div>
     );
   }
 }
 
 export default App;
+
+function computeDisplay(phrase, usedLetters) {  
+  return phrase.replace(/\w/g, (letter) => (usedLetters.has(letter) ? letter : '_'))
+}
