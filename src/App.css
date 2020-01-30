@@ -75,3 +75,18 @@ body {
   color: white;
   background: green;
 }
+
+.keyboard {
+  border: none;
+  background-color: transparent;
+  color: transparent;
+  position: absolute;
+  top: -500px;
+}
+
+.count {
+  width: auto;
+  border-color: green;
+  color: green;
+  padding: 0.2em 1em;
+}

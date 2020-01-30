@@ -15,6 +15,9 @@ OPENCLASSROOMS EST MON AMI
   .trim()
   .split('\n')
 
+  const GOOD_PTS = 5
+  const BAD_PTS = -2
+
 class App extends Component {
 
   constructor(props) {
@@ -26,35 +29,47 @@ class App extends Component {
 
   componentDidMount() {
     this.nameInput.current.focus();
+    this.nameInput.current.value=""
   }
 
   generateInitialState() {
     const phrase = PHRASES[Math.floor(Math.random() * PHRASES.length)]
     const usedLetters = new Set()
     const display = computeDisplay(phrase, usedLetters)
+    const count = 0
 
-    return { phrase, display, usedLetters, won: false}
+    return { phrase, display, usedLetters, won: false, count }
   }
 
   handletter(letter){
-    let { phrase, display, usedLetters} = this.state
-    console.log(letter)
+    let { phrase, display, usedLetters, count} = this.state
+    letter = letter.toUpperCase()
     usedLetters.add(letter)
     display = computeDisplay(phrase,usedLetters)
     const won = !display.includes('_')
-    
-    this.setState({ display, usedLetters, won })
+    count = this.countChange(letter,display)
+    this.setState({ display, usedLetters, won, count })
+    this.componentDidMount()
   }
 
   reset() {
     this.setState(this.generateInitialState()) 
   }
 
+  countChange(letter, display, count) {
+    count = display.includes(letter) ? Number(count) + Number(GOOD_PTS) : Number(BAD_PTS) + Number(count)
+    console.log(Number(this.count.value))
+    console.log(Number(GOOD_PTS))
+    console.log(Number(count) + Number(GOOD_PTS))
+    this.setState({ count })
+  }
+
   render() {
-    const { usedLetters, display, won} = this.state
+    const { usedLetters, display, won, count} = this.state
 
     return (
       <div className={`hangman ${(won && 'won') || ''}`}>
+        <p className="count">{count}</p>
         <p className="display">{display}</p>
         <p className="letters">
           {won ? (
@@ -69,7 +84,8 @@ class App extends Component {
             ))
           )}
         </p>
-        <input ref={this.nameInput} size="1" maxLength="1" onChange={() => this.handletter(this.nameInput.current.value)} /> 
+        <input className="keyboard" ref={this.nameInput} size="1" maxLength="1" value="" onChange={() => this.handletter(this.nameInput.current.value)}  />
+         
       </div>
     );
   }
