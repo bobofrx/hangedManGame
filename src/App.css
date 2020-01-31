@@ -97,3 +97,33 @@ body {
   color: red;
   padding: 0.2em 1em;
 }
+
+.gamer1 {
+  float: left;
+  margin: 10px;
+  position: relative;
+  left: 20px;
+}
+
+.gamerActive1 {
+  float: left;
+  margin: 10px;
+  position: relative;
+  left: 20px;
+  background-color: yellow;
+}
+
+.gamer2 {
+  float: right;
+  margin: 10px;
+  position: absolute;
+  right: 20px;
+}
+
+.gamerActive2 {
+  float: right;
+  margin: 10px;
+  position: absolute;
+  right: 20px;
+  background-color: yellow;
+}

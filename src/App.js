@@ -17,6 +17,8 @@ OPENCLASSROOMS EST MON AMI
 
   const GOOD_PTS = 5
   const BAD_PTS = -2
+  const GAMER_1 = 'PLAYER 1'
+  const GAMER_2 = 'PLAYER 2'
 
 class App extends Component {
 
@@ -36,39 +38,52 @@ class App extends Component {
     const phrase = PHRASES[Math.floor(Math.random() * PHRASES.length)]
     const usedLetters = new Set()
     const display = computeDisplay(phrase, usedLetters)
-    const count = 0
+    const countGamer1 = 0
+    const countGamer2 = 0
+    const token = 1
     const countLetters = new Set()
 
-    return { phrase, display, usedLetters, won: false, count, countLetters }
+    return { phrase, display, usedLetters, won: false, countLetters, countGamer1, countGamer2, token }
   }
 
   handletter(letter){
-    let { phrase, display, usedLetters, count, countLetters} = this.state
+    let { phrase, display, usedLetters, countLetters, token, countGamer1, countGamer2} = this.state
     letter = letter.toUpperCase()
     usedLetters.add(letter)
     display = computeDisplay(phrase,usedLetters)
     const won = !display.includes('_')
-    count = this.countChange(letter,display,count,countLetters)
-    this.setState({ display, usedLetters, won, count })
+    if(token === 1 ){
+      countGamer1 = this.countChange(letter,display,countLetters,token,countGamer1, countGamer2)
+    } else {
+      countGamer2 = this.countChange(letter,display,countLetters,token,countGamer1, countGamer2)
+    }
+    token = token === 1 ? 2 : 1
+    this.setState({ display, usedLetters, won, token, countGamer1, countGamer2 })
     this.componentDidMount()
   }
 
-  reset() {
+  reset() { 
     this.setState(this.generateInitialState()) 
   }
 
-  countChange(letter, display, count,countLetters) {
-    count = display.includes(letter) && !countLetters.has(letter) ? Number(count) + Number(GOOD_PTS) : (!display.includes(letter) && !countLetters.has(letter) ? Number(BAD_PTS) + Number(count) : (countLetters.has(letter) ? count : null) )
+  countChange(letter, display, countLetters, token, countGamer1, countGamer2) {
+    if (token === 1) {
+      countGamer1 = display.includes(letter) && !countLetters.has(letter) ? Number(countGamer1) + Number(GOOD_PTS) : (!display.includes(letter) && !countLetters.has(letter) ? Number(BAD_PTS) + Number(countGamer1) : (countLetters.has(letter) ? countGamer1 : null) )
+    } else {
+      countGamer2 = display.includes(letter) && !countLetters.has(letter) ? Number(countGamer2) + Number(GOOD_PTS) : (!display.includes(letter) && !countLetters.has(letter) ? Number(BAD_PTS) + Number(countGamer2) : (countLetters.has(letter) ? countGamer2 : null) )
+    }
     countLetters = !countLetters.has(letter) ? countLetters.add(letter) : countLetters
-    return count
+    return token === 1 ? countGamer1 : countGamer2
   }
 
   render() {
-    const { usedLetters, display, won, count} = this.state
+    const { usedLetters, display, won, countGamer1, countGamer2, token} = this.state
 
     return (
       <div className={`hangman ${(won && 'won') || ''}`}>
-        <p className={count >=0 ? "countPositive" : "countNegative"}>{count}</p>
+        <p className={token === 1 ? "gamerActive1" : "gamer1"}>{GAMER_1} : <span className={countGamer1 >=0 ? "countPositive" : "countNegative"}>{countGamer1}</span></p>
+        <p className={token === 2 ? "gamerActive2" : "gamer2"}>{GAMER_2} : <span className={countGamer2 >=0 ? "countPositive" : "countNegative"}>{countGamer2}</span></p>
+        <br />
         <p className="display">{display}</p>
         <p className="letters">
           {won ? (
