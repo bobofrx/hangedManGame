@@ -84,9 +84,16 @@ body {
   top: -500px;
 }
 
-.count {
+.countPositive {
   width: auto;
   border-color: green;
   color: green;
+  padding: 0.2em 1em;
+}
+
+.countNegative {
+  width: auto;
+  border-color: red;
+  color: red;
   padding: 0.2em 1em;
 }

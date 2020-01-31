@@ -37,17 +37,18 @@ class App extends Component {
     const usedLetters = new Set()
     const display = computeDisplay(phrase, usedLetters)
     const count = 0
+    const countLetters = new Set()
 
-    return { phrase, display, usedLetters, won: false, count }
+    return { phrase, display, usedLetters, won: false, count, countLetters }
   }
 
   handletter(letter){
-    let { phrase, display, usedLetters, count} = this.state
+    let { phrase, display, usedLetters, count, countLetters} = this.state
     letter = letter.toUpperCase()
     usedLetters.add(letter)
     display = computeDisplay(phrase,usedLetters)
     const won = !display.includes('_')
-    count = this.countChange(letter,display)
+    count = this.countChange(letter,display,count,countLetters)
     this.setState({ display, usedLetters, won, count })
     this.componentDidMount()
   }
@@ -56,12 +57,10 @@ class App extends Component {
     this.setState(this.generateInitialState()) 
   }
 
-  countChange(letter, display, count) {
-    count = display.includes(letter) ? Number(count) + Number(GOOD_PTS) : Number(BAD_PTS) + Number(count)
-    console.log(Number(this.count.value))
-    console.log(Number(GOOD_PTS))
-    console.log(Number(count) + Number(GOOD_PTS))
-    this.setState({ count })
+  countChange(letter, display, count,countLetters) {
+    count = display.includes(letter) && !countLetters.has(letter) ? Number(count) + Number(GOOD_PTS) : (!display.includes(letter) && !countLetters.has(letter) ? Number(BAD_PTS) + Number(count) : (countLetters.has(letter) ? count : null) )
+    countLetters = !countLetters.has(letter) ? countLetters.add(letter) : countLetters
+    return count
   }
 
   render() {
@@ -69,7 +68,7 @@ class App extends Component {
 
     return (
       <div className={`hangman ${(won && 'won') || ''}`}>
-        <p className="count">{count}</p>
+        <p className={count >=0 ? "countPositive" : "countNegative"}>{count}</p>
         <p className="display">{display}</p>
         <p className="letters">
           {won ? (
