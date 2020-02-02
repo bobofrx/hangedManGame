@@ -35,6 +35,13 @@ class App extends Component {
     this.nameInput.current.value=""
   }
 
+  componentDidUpdate() {
+    let {token} = this.state
+    const canvas = this.refs.canvas
+    const ctx = canvas.getContext('2d')
+    this.draw(ctx,token)
+  }
+
   generateInitialState() {
     const phrase = PHRASES[Math.floor(Math.random() * PHRASES.length)]
     const usedLetters = new Set()
@@ -43,7 +50,6 @@ class App extends Component {
     const countGamer2 = 0
     const token = 1
     const countLetters = new Set()
-    //this.draw()
 
     return { phrase, display, usedLetters, won: false, countLetters, countGamer1, countGamer2, token }
   }
@@ -62,6 +68,7 @@ class App extends Component {
     token = token === 1 ? 2 : 1
     this.setState({ display, usedLetters, won, token, countGamer1, countGamer2 })
     this.componentDidMount()
+    this.componentDidUpdate()
   }
 
   reset() { 
@@ -74,10 +81,8 @@ class App extends Component {
     return count
   }
 
-  draw() {
-    if (this.canvas.getContext) {
-      const ctx = this.canvas.getContext('2d')
-
+  draw(ctx,token) {
+    if(token === 2){
       ctx.beginPath();
       ctx.arc(75, 75, 50, 0, Math.PI * 2, true);  // Cercle extérieur
       ctx.moveTo(110,75);
@@ -88,6 +93,7 @@ class App extends Component {
       ctx.arc(90, 65, 5, 0, Math.PI * 2, true);  // Oeil droite
       ctx.stroke();
     }
+      
   }
 
   render() {
@@ -98,7 +104,7 @@ class App extends Component {
         <p className={token === 1 ? "gamerActive1" : "gamer1"}>{GAMER_1} : <span className={countGamer1 >=0 ? "countPositive" : "countNegative"}>{countGamer1}</span></p>
         <p className={token === 2 ? "gamerActive2" : "gamer2"}>{GAMER_2} : <span className={countGamer2 >=0 ? "countPositive" : "countNegative"}>{countGamer2}</span></p>
         <br /><br />
-        <canvas className="canvas" width="150" height="150" ref={this.canvas}></canvas>
+        <canvas className="canvas" width={350} height={550} ref="canvas" style={{border:'1px solid #000000',float:'left'}} ></canvas>
         <br /><br />
         <p className="display">{display}</p>
         <p className="letters">
