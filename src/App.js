@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import './App.css';
-import Phrase, { PHRASES } from './Phrase'
+import { PHRASES } from './Phrase'
 
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
 
