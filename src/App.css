@@ -70,10 +70,29 @@ body {
   padding: 0.2em 1em;
 }
 
+.hangman.won .letters button:not(.loose) {
+  border-color: #dfd;
+  color: #dfd;
+  cursor: not-allowed;
+}
+
+.hangman .letters button.loose {
+  width: auto;
+  border-color: red;
+  color: red;
+  padding: 0.2em 1em;
+}
+
 .hangman.won .letters button.replay:hover,
 .hangman.won .letters button.replay:active {
   color: white;
   background: green;
+}
+
+.hangman.won .letters button.loose:hover,
+.hangman.won .letters button.loose:active {
+  color: white;
+  background: red;
 }
 
 .keyboard {

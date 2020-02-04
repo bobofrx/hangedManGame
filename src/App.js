@@ -1,19 +1,10 @@
 import React, { Component } from 'react';
 
 import './App.css';
+import Phrase, { PHRASES } from './Phrase'
 
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
-const PHRASES = `
-AVEC REACT LA VIE EST BELLE
-DOMMAGE ELIANE
-IL EST SYMPA CE PETIT EXO
-J’ADORE REACT !
-LA VIE L’UNIVERS ET LE RESTE
-OPENCLASSROOMS EST MON AMI
-`
 
-  .trim()
-  .split('\n')
 
   const GOOD_PTS = 5
   const BAD_PTS = -2
@@ -79,10 +70,11 @@ class App extends Component {
 
   countChange(letter, display, countLetters, count,draw_step) {
     count = display.includes(letter) && !countLetters.has(letter) ? Number(count) + Number(GOOD_PTS) : (!display.includes(letter) && !countLetters.has(letter) ? Number(BAD_PTS) + Number(count) : (countLetters.has(letter) ? count : null) )
-    countLetters = !countLetters.has(letter) ? countLetters.add(letter) : countLetters
     if(!display.includes(letter) && !countLetters.has(letter)){
       draw_step = draw_step + 1
     }
+    countLetters = !countLetters.has(letter) ? countLetters.add(letter) : countLetters
+    this.setState({draw_step})
     return count
   }
 
@@ -138,7 +130,7 @@ class App extends Component {
         ctx.lineTo(200, 360);
         ctx.lineTo(220, 360);
       } else {
-        //vous avez perdu
+        ctx.clearRect(0,0,350,550)
       }
       ctx.stroke();
       
@@ -156,10 +148,12 @@ class App extends Component {
         <br /><br />
         <p className="display">{display}</p>
         <p className="letters">
-          {won ? (
+          {(won && draw_step < 7) ? (
             <button className="replay" onClick={() => this.reset()}>
               Rejouer
             </button>
+          ) : (draw_step >= 7) ? (
+            <button className="loose" onClick={() => this.reset()}>Vous avez perdu ! Cliquez pour rejouer</button>
           ) : (
             ALPHABET.map((letter) => (
               <button disabled={usedLetters.has(letter)} key={letter} onClick={() => this.handletter(letter)}>
