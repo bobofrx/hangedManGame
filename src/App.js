@@ -44,22 +44,29 @@ class App extends Component {
     const draw_step = 0
     const countLetters = new Set()
 
-    return { phrase, display, usedLetters, won: false, countLetters, countGamer1, countGamer2, token, draw_step}
+    return { phrase, display, usedLetters, won: false, countLetters, countGamer1, countGamer2, token, draw_step, exception:false}
   }
 
   handletter(letter){
     let { phrase, display, usedLetters, countLetters, token, countGamer1, countGamer2, draw_step} = this.state
     letter = letter.toUpperCase()
-    usedLetters.add(letter)
-    display = computeDisplay(phrase,usedLetters)
-    const won = !display.includes('_')
-    if(token === 1 ){
-      countGamer1 = this.countChange(letter,display,countLetters,countGamer1,draw_step)
+    let won = false
+    let exception = false
+    if(ALPHABET.indexOf(letter) >= 0){
+      usedLetters.add(letter)
+      display = computeDisplay(phrase,usedLetters)
+      won = !display.includes('_')
+      if(token === 1 ){
+        countGamer1 = this.countChange(letter,display,countLetters,countGamer1,draw_step)
+      } else {
+        countGamer2 = this.countChange(letter,display,countLetters,countGamer2,draw_step)
+      }
+      token = token === 1 ? 2 : 1
     } else {
-      countGamer2 = this.countChange(letter,display,countLetters,countGamer2,draw_step)
+      exception = true
     }
-    token = token === 1 ? 2 : 1
-    this.setState({ display, usedLetters, won, token, countGamer1, countGamer2 })
+    
+    this.setState({ display, usedLetters, won, token, countGamer1, countGamer2, exception })
     this.componentDidMount()
     this.componentDidUpdate()
   }
@@ -137,23 +144,37 @@ class App extends Component {
   }
 
   render() {
-    const { usedLetters, display, won, countGamer1, countGamer2, token, draw_step} = this.state
+    const { usedLetters, display, won, countGamer1, countGamer2, token, draw_step,phrase,exception} = this.state
 
     return (
       <div className={`hangman ${(won && 'won') || ''}`}>
-        <p className={token === 1 ? "gamerActive1" : "gamer1"}>{GAMER_1} : <span className={countGamer1 >=0 ? "countPositive" : "countNegative"}>{countGamer1}</span></p>
-        <p className={token === 2 ? "gamerActive2" : "gamer2"}>{GAMER_2} : <span className={countGamer2 >=0 ? "countPositive" : "countNegative"}>{countGamer2}</span></p>
+        <p className={token === 1 ? "gamerActive1" : "gamer1"}>{GAMER_1} : <span className={countGamer1 >=0 ? "countPositive" : "countNegative"}>{countGamer1}</span>
+        {(won && draw_step < 7) && (countGamer1 > countGamer2) ? " 👑" : ""}</p>
+        <p className={token === 2 ? "gamerActive2" : "gamer2"}>{GAMER_2} : <span className={countGamer2 >=0 ? "countPositive" : "countNegative"}>{countGamer2}</span>
+        {(won && draw_step < 7) && (countGamer1 < countGamer2) ? " 👑" : ""}</p>
         <br /><br />
         <canvas className="canvas" width={350} height={550} ref="canvas" style={{border:'1px solid #000000',float:'left'}} ></canvas>
         <br /><br />
-        <p className="display">{display}</p>
+        { draw_step >= 7 ? (
+          <p className="looser">
+              Vous avez perdu ! 
+              Mot à trouver : {phrase}
+        </p>
+        ) : (
+          <p className="display">{display}</p>
+        )}
+        { exception ? (
+        <p className="exception">Saisie de caractères interdit ! Veuillez jouer à nouveau :)</p>
+        ) : (
+          ""
+        )}
         <p className="letters">
           {(won && draw_step < 7) ? (
             <button className="replay" onClick={() => this.reset()}>
               Rejouer
             </button>
           ) : (draw_step >= 7) ? (
-            <button className="loose" onClick={() => this.reset()}>Vous avez perdu ! Cliquez pour rejouer</button>
+            <button className="loose" onClick={() => this.reset()}>Rejouer</button>
           ) : (
             ALPHABET.map((letter) => (
               <button disabled={usedLetters.has(letter)} key={letter} onClick={() => this.handletter(letter)}>
@@ -162,6 +183,7 @@ class App extends Component {
             ))
           )}
         </p>
+        
         <input className="keyboard" ref={this.nameInput} size="1" maxLength="1" value="" onChange={() => this.handletter(this.nameInput.current.value)}  />
          
       </div>

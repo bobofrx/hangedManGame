@@ -81,6 +81,8 @@ body {
   border-color: red;
   color: red;
   padding: 0.2em 1em;
+  left: 1000px;
+  position:absolute;
 }
 
 .hangman.won .letters button.replay:hover,
@@ -145,4 +147,14 @@ body {
   position: absolute;
   right: 20px;
   background-color: yellow;
+}
+
+.hangman .looser {
+  color:red;
+  text-align: center;
+}
+
+.hangman .exception {
+  color: orangered;
+  text-align: center;
 }
