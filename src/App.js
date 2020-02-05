@@ -27,6 +27,8 @@ class App extends Component {
   }
 
   componentDidUpdate() {
+    this.nameInput.current.focus();
+    this.nameInput.current.value=""
     let {draw_step} = this.state
     const canvas = this.refs.canvas
     const ctx = canvas.getContext('2d')
